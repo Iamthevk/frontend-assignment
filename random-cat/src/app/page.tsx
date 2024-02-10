@@ -1,33 +1,16 @@
 "use client";
 import Image from "next/image";
-import { useEffect, useState, Dispatch, SetStateAction } from "react";
+import { useEffect, useState, Dispatch, SetStateAction, use } from "react";
+import RandomCat, { CatData, fetcher } from "./components/RandomCat";
 
-type CatData = {
-  id: string;
-  url: string;
-};
-
-type CatBio = {
-  breeds: {
-    description: string;
-  }[];
-};
-const fetcher = async (
-  url: string,
-  setter: Dispatch<SetStateAction<CatData[]>>
-) => {
-  try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
+export type CatBio = {
+  breeds: [
+    {
+      description: string;
+      intelligence: string;
     }
-    const data: CatData[] = await response.json();
-    setter(data);
-  } catch (error: any) {
-    console.error("Error fetching data:", error.message);
-    setter([]);
-  }
-};
+  ];
+} | null;
 
 const bioFetcher = async (
   url: string,
@@ -42,34 +25,58 @@ const bioFetcher = async (
     setter(data);
   } catch (error: any) {
     console.error("Error fetching bio:", error.message);
-    setter({ breeds: [] });
+    setter(null);
   }
 };
 
 export default function Home() {
-  const ENDPOINT = `https://api.thecatapi.com/v1/images/search?has_breeds=1`;
+  const [catBio, setCatBio] = useState<CatBio | null>(null);
+  const [catList, setCatList] = useState<CatData[]>([]);
 
-  const [catData, setCatData] = useState<CatData[]>([]);
-  const [catBio, setCatBio] = useState<CatBio>({ breeds: [] });
   useEffect(() => {
-    fetcher(ENDPOINT, setCatData);
+    const ENDPOINT3 = `https://api.thecatapi.com/v1/images/search?limit=10&breed_ids=cymr&api_key=${process.env.NEXT_PUBLIC_API_KEY}`;
+    fetcher(ENDPOINT3, setCatList);
   }, []);
 
   useEffect(() => {
-    if (catData.length > 0) {
-      const ENDPOINT2 = `https://api.thecatapi.com/v1/images/${catData[0]?.id}`;
-      bioFetcher(ENDPOINT2, setCatBio);
+    if (catList.length > 0) {
+      catList.map((cat) => {
+        const ENDPOINT2 = `https://api.thecatapi.com/v1/images/${cat?.id}`;
+        bioFetcher(ENDPOINT2, setCatBio);
+      });
     }
-  }, [catData]);
-  console.log(catData);
+  }, [catList]);
+  // console.log(catData);
   console.log(catBio);
-  if (!catData) {
-    return <p>Loading.....</p>;
-  }
+  console.log(catList);
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <Image src={catData[0]?.url} alt="cat" width={300} height={300} />
-      <p>{catBio?.breeds[0]?.description}</p>
+    <main className="flex min-h-screen flex-col items-center justify-between p-24 bg-[hsl(0deg, 0%, 95%)]">
+      <RandomCat catBio={catBio} />
+      <div className="flex gap-8 max-w-[500px] flex-wrap">
+        {catList.length > 0 ? (
+          catList.map((cat) => {
+            return (
+              <div
+                className="flex flex-1 min-w-[250px] drop-shadow-lg"
+                key={cat.id}
+              >
+                <Image
+                  src={cat.url}
+                  width={200}
+                  height={200}
+                  alt={`cat-${cat.id}`}
+                  className="w-full border border-white rounded-lg cursor-pointer"
+                />
+                <p>intelligence: {catBio?.breeds[0].intelligence}</p>
+              </div>
+            );
+          })
+        ) : (
+          <h1 className="flex justify-center items-center text-white bg-slate-950 animate-pulse w-52 h-10">
+            Loading...
+          </h1>
+        )}
+      </div>
     </main>
   );
 }
