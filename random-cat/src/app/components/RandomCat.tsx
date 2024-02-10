@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useEffect, useState, Dispatch, SetStateAction, use, FC } from "react";
+import { useEffect, useState, Dispatch, SetStateAction, FC } from "react";
 import { CatBio } from "../page";
 
 export type CatData = {
@@ -35,12 +35,25 @@ const RandomCat: FC<{ catBio: CatBio }> = ({ catBio }) => {
   };
 
   return (
-    <section className="flex">
-      <div className="w-[500px] ">
-        <Image src={catData[0]?.url} alt="cat" width={300} height={300} />
-        <p>{catBio?.breeds[0]?.description}</p>
+    <section className="w-full md:w-9/12 flex flex-col border-4  md:p-5 mb-24">
+      <div className="flex flex-col justify-center items-center gap-10 md:flex-row p-3">
+        <Image
+          src={catData[0]?.url}
+          alt="cat"
+          width={300}
+          height={300}
+          className="w-[300px] h-[300px] bg-center object-fill bg-cover rounded-lg hover:scale-110 transition-all mb-3"
+        />
+        <button
+          onClick={handleChangeCat}
+          className="bg-gray-500 p-3 rounded-lg text-white shadow-lg shadow-black active:shadow-none"
+        >
+          Get new cat
+        </button>
       </div>
-      <button onClick={handleChangeCat}>Get new cat</button>
+      <p className="text-2xl text-green-900 leading-10">
+        {catBio?.breeds[0].description}
+      </p>
     </section>
   );
 };
