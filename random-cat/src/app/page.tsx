@@ -1,7 +1,8 @@
 "use client";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import RandomCat, { CatData, fetcher } from "./components/RandomCat";
+import RandomCat, { CatData, fetcher } from "../components/RandomCat";
+import Toasty from "../components/Toasty.js";
 
 export type CatBio = {
   breeds: [
@@ -54,13 +55,19 @@ export default function Home() {
   console.log(catList);
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-4 md:p-24 bg-[hsl(0deg, 0%, 95%)]">
+      <header className="flex justify-start items-start text-4xl font-bold text-center mb-10 text-[#e53170]">
+        <a href="https://vijaykumar.online/" target="_blank">
+          Cat App
+        </a>
+      </header>
       <RandomCat catBio={catBio} />
-      <div className="flex gap-8 max-w-[500px] flex-wrap">
+      <Toasty />
+      <div className="flex justify-center items-center gap-8 max-w-[500px] flex-wrap">
         {catList.length > 0 ? (
           catList.map((cat) => {
             return (
               <div
-                className="flex-col md:flex-row flex flex-1 gap-4 min-w-[320px] md:min-w-[250px] drop-shadow-lg"
+                className="card flex-col md:flex-row flex flex-1 gap-4 min-w-[320px] md:min-w-[600px] md:h-[240px] drop-shadow-lg"
                 key={cat.id}
               >
                 <Image
@@ -68,25 +75,35 @@ export default function Home() {
                   width={200}
                   height={200}
                   alt={`cat-${cat.id}`}
-                  className="hidden md:block w-full border border-white rounded-lg cursor-pointer"
+                  className="hidden md:block  border border-white rounded-lg cursor-pointer"
                 />
                 <Image
                   src={cat.url}
                   width={500}
                   height={500}
                   alt={`cat-${cat.id}`}
-                  className=" md:hidden w-full border border-white rounded-lg cursor-pointer"
+                  className=" md:hidden border border-white rounded-lg cursor-pointer"
                 />
-                <section className="flex gap-7 mt-5">
-                  <div className="flex flex-col gap-4">
-                    <p>name: {catBio?.breeds[0].name}</p>
-
-                    <p>intelligence: {catBio?.breeds[0].intelligence}</p>
-                  </div>
-                  <div className="flex flex-col gap-4">
-                    <p>adaptability: {catBio?.breeds[0].adaptability}</p>
+                <section className="card__headings flex justify-center items-center pb-5 gap-10 ">
+                  <div className=" flex flex-col gap-7 md:gap-6 text-xl md:text-lg">
                     <p>
-                      life_span:<br></br>
+                      <span className="font-bold">Name: </span>
+                      {catBio?.breeds[0].name}
+                    </p>
+
+                    <p>
+                      <span className="font-bold">Intelligence:</span>{" "}
+                      {catBio?.breeds[0].intelligence}
+                    </p>
+                  </div>
+                  <div className="flex flex-col  md:gap-6 md:pt-6 text-xl md:text-lg">
+                    <p>
+                      <span className="font-bold">Adaptability:</span>{" "}
+                      {catBio?.breeds[0].adaptability}
+                    </p>
+                    <p>
+                      <span className="font-bold">Life_span:</span>
+                      <br></br>
                       {catBio?.breeds[0].life_span}{" "}
                     </p>
                   </div>
