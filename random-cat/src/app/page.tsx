@@ -1,7 +1,11 @@
 "use client";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import RandomCat, { CatData, fetcher } from "../components/RandomCat";
+import RandomCat, {
+  CatData,
+  bioFetcher,
+  fetcher,
+} from "../components/RandomCat";
 import Toasty from "../components/Toasty.js";
 
 export type CatBio = {
@@ -15,23 +19,6 @@ export type CatBio = {
     }
   ];
 } | null;
-
-export const bioFetcher = async (
-  url: string,
-  setter: React.Dispatch<React.SetStateAction<CatBio>>
-) => {
-  try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    const data: CatBio = await response.json();
-    setter(data);
-  } catch (error: any) {
-    console.error("Error fetching bio:", error.message);
-    setter(null);
-  }
-};
 
 export default function Home() {
   const [catBio, setCatBio] = useState<CatBio | null>(null);

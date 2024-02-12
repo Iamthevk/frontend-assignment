@@ -1,10 +1,27 @@
 import Image from "next/image";
 import { useEffect, useState, Dispatch, SetStateAction, FC } from "react";
-import { CatBio, bioFetcher } from "../app/page";
+import { CatBio } from "../app/page";
 
 export type CatData = {
   id: string;
   url: string;
+};
+
+export const bioFetcher = async (
+  url: string,
+  setter: React.Dispatch<React.SetStateAction<CatBio>>
+) => {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const data: CatBio = await response.json();
+    setter(data);
+  } catch (error: any) {
+    console.error("Error fetching bio:", error.message);
+    setter(null);
+  }
 };
 export const fetcher = async (
   url: string,
