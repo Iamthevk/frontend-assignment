@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { useEffect, useState, Dispatch, SetStateAction, FC } from "react";
-import { CatBio } from "../app/page";
+import { CatBio, bioFetcher } from "../app/page";
 
 export type CatData = {
   id: string;
@@ -24,8 +24,9 @@ export const fetcher = async (
 };
 const ENDPOINT = `https://api.thecatapi.com/v1/images/search?has_breeds=1`;
 
-const RandomCat: FC<{ catBio: CatBio }> = ({ catBio }) => {
+const RandomCat = () => {
   const [catData, setCatData] = useState<CatData[]>([]);
+  const [catBio, setCatBio] = useState<CatBio | null>(null);
   useEffect(() => {
     fetcher(ENDPOINT, setCatData);
   }, []);
@@ -33,7 +34,14 @@ const RandomCat: FC<{ catBio: CatBio }> = ({ catBio }) => {
   const handleChangeCat = () => {
     fetcher(ENDPOINT, setCatData);
   };
-
+  useEffect(() => {
+    if (catData.length > 0) {
+      catData.map((cat) => {
+        const ENDPOINT2 = `https://api.thecatapi.com/v1/images/${cat?.id}`;
+        bioFetcher(ENDPOINT2, setCatBio);
+      });
+    }
+  }, [catData]);
   return (
     <section className="w-full md:w-9/12 flex flex-col border-4 border-white  md:p-5 mb-24">
       <div className="flex flex-col justify-center items-center gap-10 md:flex-row p-3">

@@ -16,7 +16,7 @@ export type CatBio = {
   ];
 } | null;
 
-const bioFetcher = async (
+export const bioFetcher = async (
   url: string,
   setter: React.Dispatch<React.SetStateAction<CatBio>>
 ) => {
@@ -60,7 +60,7 @@ export default function Home() {
           Cat App
         </a>
       </header>
-      <RandomCat catBio={catBio} />
+      <RandomCat />
       <Toasty />
       <div className="flex justify-center items-center gap-8 max-w-[500px] flex-wrap">
         {catList.length > 0 ? (
